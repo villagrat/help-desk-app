@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { register } from '../features/auth/authSlice';
 import { FaUser } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
@@ -12,6 +14,14 @@ function Register() {
 
   const { name, email, password1, password2 } = formData;
 
+  // hook to dispatch actions @ features
+  const dispatch = useDispatch();
+
+  // hook to bring pieces of global state - name of State Slice
+  const { user, isLoading, isSuccess, message } = useSelector(
+    (state) => state.auth
+  );
+
   const onChange = (e) => {
     setFormData((prevState) => ({
       ...prevState,
@@ -24,6 +34,15 @@ function Register() {
 
     if (password1 !== password2) {
       toast.error('Passwords do not match');
+    } else {
+      const userData = {
+        name,
+        email,
+        password1,
+      };
+
+      // dispatch action to handle state
+      dispatch(register(userData));
     }
   };
 
