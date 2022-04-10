@@ -6,6 +6,6 @@ Created with the MERN technology stack for learning purposes
 
 User Authentication implemented with JWT
 
-## Technologies used in this challenge:
+## Technologies used in this project:
 
 Mongo, Express.js, React.js, Node.js

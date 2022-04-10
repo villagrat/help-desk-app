@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { register } from '../features/auth/authSlice';
+import { register, reset } from '../features/auth/authSlice';
 import { FaUser } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
@@ -8,19 +9,34 @@ function Register() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    password1: '',
-    password2: ' ',
+    password: '',
+    password2: '',
   });
 
-  const { name, email, password1, password2 } = formData;
+  const { name, email, password, password2 } = formData;
+
+  const navigate = useNavigate();
 
   // hook to dispatch actions @ features
   const dispatch = useDispatch();
 
   // hook to bring pieces of global state - name of State Slice
-  const { user, isLoading, isSuccess, message } = useSelector(
+  const { user, isLoading, isSuccess, isError, message } = useSelector(
     (state) => state.auth
   );
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(message);
+    }
+
+    // redirect when logged in
+    if (isSuccess || user) {
+      navigate('/');
+    }
+
+    dispatch(reset);
+  }, [isError, isSuccess, user, message, navigate, dispatch]);
 
   const onChange = (e) => {
     setFormData((prevState) => ({
@@ -32,13 +48,13 @@ function Register() {
   const onSubmit = (e) => {
     e.preventDefault();
 
-    if (password1 !== password2) {
+    if (password !== password2) {
       toast.error('Passwords do not match');
     } else {
       const userData = {
         name,
         email,
-        password1,
+        password,
       };
 
       // dispatch action to handle state
@@ -85,9 +101,9 @@ function Register() {
             <input
               type='password'
               className='form-control'
-              id='password1'
-              name='password1'
-              value={password1}
+              id='password'
+              name='password'
+              value={password}
               onChange={onChange}
               placeholder='Enter password'
               required
