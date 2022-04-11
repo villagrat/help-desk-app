@@ -1,14 +1,35 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
+import Modal from 'react-modal';
 import { getTicket, closeTicket } from '../features/tickets/ticketSlice';
 import { getNotes, reset as notesReset } from '../features/notes/noteSlice';
-import { toast } from 'react-toastify';
+import { FaPlus } from 'react-icons/fa';
 import BackButton from '../components/BackButton';
 import Spinner from '../components/Spinner';
 import NoteItem from '../components/NoteItem';
 
+const customStyles = {
+  content: {
+    width: '600px',
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%,-50%)',
+    position: 'relative',
+  },
+};
+
+// looks into index html file and mounts it there
+Modal.setAppElement('#root');
+
 function Ticket() {
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [noteText, setNoteText] = useState('');
+
   const { ticket, isLoading, isSuccess, isError, message } = useSelector(
     (state) => state.tickets
   );
@@ -31,7 +52,7 @@ function Ticket() {
     dispatch(getTicket(ticketId));
     dispatch(getNotes(ticketId));
 
-    // React wants dispatch as a dependency, but that causes infinite loop of reloads
+    // React wants 'dispatch' as a dependency, but that causes infinite loop of reloads
     // eslint-disable-next-line
   }, [isError, message, ticketId]);
 
@@ -41,6 +62,16 @@ function Ticket() {
     toast.success('Ticket Closed');
     navigate('/tickets');
   };
+
+  // submit note to BE
+  const onNoteSubmit = (e) => {
+    e.preventDefault();
+    closeModal();
+  };
+
+  // open/close modal
+  const openModal = () => setModalIsOpen(true);
+  const closeModal = () => setModalIsOpen(false);
 
   if (isLoading || notesIsLoading) {
     return <Spinner />;
@@ -72,6 +103,41 @@ function Ticket() {
         </div>
         <h2>Notes</h2>
       </header>
+
+      {ticket.status !== 'closed' && (
+        <button onClick={openModal} className='btn'>
+          <FaPlus /> Add Note
+        </button>
+      )}
+
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        style={customStyles}
+        contentLabel='Add Note'
+      >
+        <h2>Add Note</h2>
+        <button onClick={closeModal} className='btn-close'>
+          X
+        </button>
+        <form onSubmit={onNoteSubmit}>
+          <div className='form-group'>
+            <textarea
+              name='noteText'
+              id='noteText'
+              className='form-control'
+              placeholder='Please write your note here'
+              value={noteText}
+              onChange={(e) => setNoteText(e.target.value)}
+            ></textarea>
+          </div>
+          <div className='form-group'>
+            <button className='btn' type='submit'>
+              Submit
+            </button>
+          </div>
+        </form>
+      </Modal>
 
       {notes.map((note) => (
         <NoteItem key={note._id} note={note} />
