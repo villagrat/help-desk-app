@@ -29,7 +29,7 @@ export const createTicket = createAsyncThunk(
     }
   }
 );
-// Get a user's tickets
+// Get all of a user's tickets
 export const getTickets = createAsyncThunk(
   'tickets/getAll',
   async (_, thunkAPI) => {
@@ -49,7 +49,7 @@ export const getTickets = createAsyncThunk(
     }
   }
 );
-// Get a user's ticket
+// Get a single ticket from a user
 export const getTicket = createAsyncThunk(
   'tickets/getTicket',
   async (ticketId, thunkAPI) => {
