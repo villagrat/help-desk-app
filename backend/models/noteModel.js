@@ -17,11 +17,11 @@ const noteSchema = mongoose.Schema(
       type: String,
       required: [true, 'Please add some text'],
     },
-    isStaff: {
+    isAdmin: {
       type: Boolean,
       default: false,
     },
-    staffId: {
+    adminId: {
       type: String,
     },
   },
