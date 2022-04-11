@@ -49,7 +49,7 @@ export const getTickets = createAsyncThunk(
     }
   }
 );
-// Get a user's tickets
+// Get a user's ticket
 export const getTicket = createAsyncThunk(
   'tickets/getTicket',
   async (ticketId, thunkAPI) => {
@@ -57,6 +57,26 @@ export const getTicket = createAsyncThunk(
       const token = thunkAPI.getState().auth.user.token;
 
       return await ticketService.getTicket(ticketId, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+// Close a user's ticket
+export const closeTicket = createAsyncThunk(
+  'tickets/close',
+  async (ticketId, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+
+      return await ticketService.closeTicket(ticketId, token);
     } catch (error) {
       const message =
         (error.response &&
@@ -115,6 +135,17 @@ export const ticketSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
+      })
+      // closing ticket at FE to make styling of status instant
+      // otherwise it has to await the BE response
+      .addCase(closeTicket.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.tickets.map((ticket) =>
+          ticket._id === action.payload._id
+            ? (ticket.status = 'closed')
+            : ticket
+        );
       });
   },
 });
