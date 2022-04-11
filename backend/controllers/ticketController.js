@@ -20,7 +20,7 @@ const getTickets = asyncHandler(async (req, res) => {
 });
 
 // @desc   GET a current user's single ticket
-// @route  /api/tickets/:id
+// @route  /api/tickets/:ticketId
 // @method GET
 // @access Private
 const getTicket = asyncHandler(async (req, res) => {
@@ -74,7 +74,7 @@ const createTicket = asyncHandler(async (req, res) => {
 });
 
 // @desc   Delete a ticket
-// @route  /api/tickets/:id
+// @route  /api/tickets/:ticketId
 // @method DELETE
 // @access Private
 const deleteTicket = asyncHandler(async (req, res) => {
@@ -102,7 +102,7 @@ const deleteTicket = asyncHandler(async (req, res) => {
 });
 
 // @desc   Update a single ticket
-// @route  /api/tickets/:id
+// @route  /api/tickets/:ticketId
 // @method UPDATE
 // @access Private
 const updateTicket = asyncHandler(async (req, res) => {

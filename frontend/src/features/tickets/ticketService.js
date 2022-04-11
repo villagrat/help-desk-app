@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api/tickets';
+const API_URL = 'http://localhost:5000/api/tickets/';
 
 // Create new ticket
 const createTicket = async (ticketData, token) => {
@@ -34,7 +34,7 @@ const getTicket = async (ticketId, token) => {
     },
   };
 
-  const response = await axios.get(API_URL + '/' + ticketId, config);
+  const response = await axios.get(API_URL + ticketId, config);
 
   return response.data;
 };
@@ -47,7 +47,7 @@ const closeTicket = async (ticketId, token) => {
   };
 
   const response = await axios.put(
-    API_URL + '/' + ticketId,
+    API_URL + ticketId,
     { status: 'closed' },
     config
   );
